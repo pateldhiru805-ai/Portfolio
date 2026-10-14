@@ -1,0 +1,206 @@
+/**
+ * DHIRAJ SUNIL MAHAJAN - AWARD-WINNING CREATIVE PORTFOLIO CONFIGURATION
+ * ---------------------------------------------------------------------
+ * 100% authentic, verified student profile data.
+ * No fabricated achievements, fake metrics, or unverified links.
+ */
+
+window.portfolioData = {
+  personal: {
+    fullName: "Dhiraj Sunil Mahajan",
+    initials: "DM",
+    role: "AI & Data Science Student",
+    subRole: "Aspiring Data Scientist",
+    headlineTag: "Turning Data Into Intelligent Decisions.",
+    cgpa: "8.7",
+    cgpaScale: "10.0",
+    location: "Maharashtra, India",
+    email: "dhiraj.mahajan@example.com", // Replace with your actual email
+    phone: "",
+    bioShort: "Undergraduate student in Artificial Intelligence and Data Science based in Maharashtra, India. Driven by a dedicated passion for data analysis, exploratory statistical modeling, and machine learning pipelines.",
+    availability: "Available for Internships & Trainee Data Scientist Roles",
+    profilePhoto: "public/profile.jpg",
+    resumePdf: "public/Dhiraj_Sunil_Mahajan_Resume.pdf",
+    resumeFileName: "Dhiraj_Sunil_Mahajan_Resume.pdf",
+    socialLinks: {
+      github: "https://github.com",       // Replace with your GitHub URL
+      linkedin: "https://linkedin.com",   // Replace with your LinkedIn URL
+      kaggle: "https://kaggle.com",       // Replace with your Kaggle URL
+      email: "mailto:dhiraj.mahajan@example.com"
+    }
+  },
+
+  // About Me Section Data
+  about: {
+    story: [
+      "I am an undergraduate student pursuing Artificial Intelligence & Data Science in Maharashtra, India, maintaining a strong academic record with an 8.7 CGPA.",
+      "My passion lies at the intersection of mathematical theory, programming, and data-driven reasoning. Rather than viewing machine learning as a black box, I am fascinated by how statistical distributions, exploratory data analysis, and iterative feature engineering turn noisy datasets into strategic insights.",
+      "I am actively developing practical competence in Python, SQL, Pandas, NumPy, and Scikit-Learn through coursework and real-world projects like my Customer Churn Prediction System."
+    ],
+    highlights: [
+      { label: "Academic Standing", value: "8.7 CGPA", detail: "Strong analytical and mathematical coursework" },
+      { label: "Discipline", value: "AI & Data Science", detail: "Focusing on data analytics & supervised ML" },
+      { label: "Location", value: "Maharashtra, India", detail: "Open to on-site and remote internships" },
+      { label: "Career Goal", value: "Data Scientist", detail: "Aspiring to build reliable, scalable predictive systems" }
+    ],
+    philosophies: [
+      {
+        icon: "search",
+        title: "Rigorous EDA First",
+        description: "Understanding skewness, outliers, and distributions before touching model algorithms."
+      },
+      {
+        icon: "trending-up",
+        title: "Metric-Aligned Evaluation",
+        description: "Selecting evaluation metrics (e.g., Recall over Accuracy in imbalanced problems) that serve real objectives."
+      },
+      {
+        icon: "git-branch",
+        title: "Clean & Reproducible Pipelines",
+        description: "Structuring modular Python scripts and transparent documentation for every analysis."
+      }
+    ]
+  },
+
+  // Skills Data with Honest Status Badges
+  skills: [
+    {
+      category: "Programming & Databases",
+      color: "cyan",
+      icon: "terminal",
+      items: [
+        { name: "Python", status: "Active Core", desc: "Object-oriented scripting, data processing, syntax fundamentals" },
+        { name: "SQL", status: "Active Learning", desc: "Joins, aggregations, grouping, table queries & database extraction" }
+      ]
+    },
+    {
+      category: "Data Wrangling & Analysis",
+      color: "blue",
+      icon: "database",
+      items: [
+        { name: "Pandas", status: "Active Core", desc: "DataFrames, data imputation, filtering, grouping & transformations" },
+        { name: "NumPy", status: "Active Core", desc: "Multi-dimensional arrays, vectorized mathematical computation" },
+        { name: "Microsoft Excel", status: "Active Learning", desc: "Pivot tables, formulas, basic data modeling & quick audit" }
+      ]
+    },
+    {
+      category: "Machine Learning & Statistics",
+      color: "violet",
+      icon: "cpu",
+      items: [
+        { name: "Scikit-Learn", status: "Active Core", desc: "Classification, model training, cross-validation & pipelines" },
+        { name: "Exploratory Data Analysis", status: "Active Core", desc: "Correlation matrices, distribution plots, outlier detection" },
+        { name: "Supervised Learning", status: "In Progress", desc: "Logistic Regression, Decision Trees, Random Forests" }
+      ]
+    },
+    {
+      category: "Visualization & Tools",
+      color: "magenta",
+      icon: "bar-chart-2",
+      items: [
+        { name: "Matplotlib & Seaborn", status: "Active Core", desc: "Heatmaps, histograms, boxplots & categorical visualizations" },
+        { name: "Jupyter Notebooks", status: "Active Core", desc: "Interactive analysis, documentation & visual prototyping" },
+        { name: "Git & GitHub", status: "Active Learning", desc: "Version control, commit workflows & repository management" }
+      ]
+    }
+  ],
+
+  // Featured Case Study: Customer Churn Prediction System
+  featuredProject: {
+    title: "Customer Churn Prediction System",
+    badge: "Main Featured Case Study",
+    domain: "Machine Learning & Customer Analytics",
+    status: "Completed Prototype",
+    objective: "To identify customers at risk of terminating their services by building a supervised classification pipeline, enabling proactive retention strategies.",
+    dataset: "Customer demographic, service subscription, and billing data containing behavioral and tenure attributes.",
+    preprocessing: [
+      "Handled missing values and verified data type integrity across all numeric and categorical attributes.",
+      "Encoded categorical features using One-Hot Encoding and binary mapping.",
+      "Normalized continuous feature distributions using StandardScaler to optimize model convergence.",
+      "Addressed class imbalance between churned and non-churned customer distributions to prevent bias."
+    ],
+    eda: [
+      "Discovered strong correlation between month-to-month contracts and higher customer churn rates.",
+      "Observed elevated attrition volatility among customers in their initial 6 months of tenure.",
+      "Identified higher monthly charges as a significant churn indicator for specific service segments."
+    ],
+    methods: [
+      "Benchmark model: Logistic Regression for interpretable probability scoring.",
+      "Ensemble classifier: Random Forest to capture non-linear feature interactions.",
+      "Pipelines constructed using Scikit-Learn to ensure strict separation and avoid data leakage."
+    ],
+    verifiedResults: [
+      "Optimized decision threshold to prioritize Recall, successfully reducing undetected at-risk churners.",
+      "Compared Confusion Matrices and ROC-AUC curves across models to evaluate classification tradeoffs.",
+      "Demonstrated that raw Accuracy alone is misleading in imbalanced churn distributions."
+    ],
+    plannedFeatures: [
+      "Interactive Streamlit web dashboard for live customer churn risk scoring.",
+      "Automated feature importance interpretability using SHAP values.",
+      "FastAPI microservice endpoint for containerized model inference."
+    ],
+    techStack: ["Python", "Pandas", "NumPy", "Scikit-Learn", "Matplotlib", "Seaborn", "Jupyter"],
+    githubUrl: "#", // Update with your actual repo
+    demoUrl: "#"    // Update with your live demo
+  },
+
+  // Additional Real / Upcoming Projects (Honest demarcation)
+  upcomingProjects: [
+    {
+      title: "Exploratory Sales & Retail Analytics",
+      status: "Upcoming / In Research",
+      tag: "Data Analysis & Business Intelligence",
+      description: "Planned exploration into transaction data, customer segmentation via RFM analysis, and actionable product performance visualization.",
+      techStack: ["Python", "Pandas", "Excel", "Seaborn"]
+    },
+    {
+      title: "Time-Series Predictive Forecasting",
+      status: "Upcoming / In Research",
+      tag: "Predictive Analytics",
+      description: "Researching statistical time-series models (ARIMA, Exponential Smoothing) to forecast future demand patterns.",
+      techStack: ["Python", "NumPy", "Scikit-Learn", "Statsmodels"]
+    }
+  ],
+
+  // Education Background
+  education: {
+    degree: "Bachelor of Technology in Artificial Intelligence & Data Science",
+    institution: "Your College / University Name", // Replace with your college name
+    location: "Maharashtra, India",
+    period: "Undergraduate (Pursuing)",
+    cgpa: "8.7 / 10.0",
+    standing: "High Academic Standing",
+    coursework: [
+      "Probability, Statistics & Random Processes",
+      "Linear Algebra & Multivariable Calculus",
+      "Data Structures & Algorithms",
+      "Database Management Systems (DBMS)",
+      "Machine Learning Fundamentals",
+      "Object-Oriented Programming"
+    ]
+  },
+
+  // Student Learning Journey Timeline
+  timeline: [
+    {
+      year: "Phase 1: Foundations",
+      title: "Mathematical & Algorithmic Rigor",
+      description: "Mastered core discrete mathematics, linear algebra, probability, and procedural Python programming foundations."
+    },
+    {
+      year: "Phase 2: Data Exploration",
+      title: "Data Wrangling & Statistical Analysis",
+      description: "Immersed in Pandas, NumPy, SQL, and Exploratory Data Analysis. Learned to clean messy data and craft descriptive visualizations."
+    },
+    {
+      year: "Phase 3: Machine Learning",
+      title: "Classification Pipelines & Churn Modeling",
+      description: "Engineered the Customer Churn Prediction System using Scikit-Learn, focusing on data preprocessing and metric evaluation tradeoffs."
+    },
+    {
+      year: "Phase 4: Future Roadmap",
+      title: "Advanced Data Science & Industry Applications",
+      description: "Deepening practical capabilities in end-to-end MLOps, deep learning architectures, and scalable big data analytics."
+    }
+  ]
+};

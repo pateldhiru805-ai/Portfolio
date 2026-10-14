@@ -1,0 +1,596 @@
+/**
+ * DHIRAJ SUNIL MAHAJAN - CREATIVE MOTION & INTERACTION ENGINE
+ * ---------------------------------------------------------------------
+ * High-performance 3D Canvas Constellation, Scroll Animations,
+ * Interactive Case Study Tabs, and Portrait Handling.
+ */
+
+document.addEventListener('DOMContentLoaded', () => {
+  initHeroCanvas();
+  initHeadlineAnimation();
+  renderCreativePortfolio();
+  initCaseStudyTabs();
+  initClipboardToast();
+  initScrollSpy();
+  initMobileMenu();
+  initContactForm();
+  lucide.createIcons();
+});
+
+/* ==========================================================================
+   1. INTERACTIVE 3D DATA CONSTELLATION & PARTICLE FIELD
+   ========================================================================== */
+function initHeroCanvas() {
+  const canvas = document.getElementById('hero-canvas');
+  if (!canvas) return;
+
+  // Check prefers-reduced-motion
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let animationFrameId;
+  let mouse = { x: null, y: null, targetX: null, targetY: null, radius: 150 };
+
+  const particles = [];
+  const particleCount = window.innerWidth < 768 ? 45 : 85;
+  const colors = ['#00f5ff', '#3b82f6', '#8b5cf6', '#d946ef', '#ff6b6b'];
+
+  function resize() {
+    width = canvas.width = canvas.parentElement.offsetWidth || window.innerWidth;
+    height = canvas.height = canvas.parentElement.offsetHeight || 650;
+  }
+  resize();
+  window.addEventListener('resize', resize, { passive: true });
+
+  // Track Mouse coordinates for 3D physics parallax
+  window.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
+      mouse.targetX = e.clientX - rect.left;
+      mouse.targetY = e.clientY - rect.top;
+    }
+  }, { passive: true });
+
+  window.addEventListener('mouseleave', () => {
+    mouse.targetX = null;
+    mouse.targetY = null;
+  });
+
+  // Particle Class with 3D depth (z coordinate)
+  class DataParticle {
+    constructor() {
+      this.reset();
+    }
+    reset() {
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
+      this.z = Math.random() * 2 + 0.5; // Depth multiplier
+      this.vx = (Math.random() - 0.5) * 0.7 * this.z;
+      this.vy = (Math.random() - 0.5) * 0.7 * this.z;
+      this.radius = Math.random() * 2 + 1.2;
+      this.color = colors[Math.floor(Math.random() * colors.length)];
+      this.baseAlpha = Math.random() * 0.5 + 0.3;
+    }
+    update() {
+      if (prefersReducedMotion) return;
+
+      this.x += this.vx;
+      this.y += this.vy;
+
+      // Wrap around bounds
+      if (this.x < 0) this.x = width;
+      if (this.x > width) this.x = 0;
+      if (this.y < 0) this.y = height;
+      if (this.y > height) this.y = 0;
+
+      // Mouse interactive repelling force
+      if (mouse.x !== null && mouse.y !== null) {
+        const dx = mouse.x - this.x;
+        const dy = mouse.y - this.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < mouse.radius) {
+          const force = (mouse.radius - dist) / mouse.radius;
+          this.x -= (dx / dist) * force * 3 * this.z;
+          this.y -= (dy / dist) * force * 3 * this.z;
+        }
+      }
+    }
+    draw() {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius * (this.z * 0.8), 0, Math.PI * 2);
+      ctx.fillStyle = this.color;
+      ctx.globalAlpha = this.baseAlpha;
+      ctx.shadowBlur = 10;
+      ctx.shadowColor = this.color;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+  }
+
+  for (let i = 0; i < particleCount; i++) {
+    particles.push(new DataParticle());
+  }
+
+  function render() {
+    ctx.clearRect(0, 0, width, height);
+
+    // Smooth mouse interpolation
+    if (mouse.targetX !== null) {
+      if (mouse.x === null) {
+        mouse.x = mouse.targetX;
+        mouse.y = mouse.targetY;
+      } else {
+        mouse.x += (mouse.targetX - mouse.x) * 0.08;
+        mouse.y += (mouse.targetY - mouse.y) * 0.08;
+      }
+    } else {
+      mouse.x = null;
+      mouse.y = null;
+    }
+
+    // Connect nearby nodes with gradient synaptic lines
+    const maxDist = 110;
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i + 1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < maxDist) {
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.strokeStyle = particles[i].color;
+          ctx.globalAlpha = (1 - dist / maxDist) * 0.18;
+          ctx.lineWidth = 0.85;
+          ctx.stroke();
+        }
+      }
+    }
+
+    // Update & draw particles
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+
+    if (!prefersReducedMotion) {
+      animationFrameId = requestAnimationFrame(render);
+    }
+  }
+
+  render();
+}
+
+/* ==========================================================================
+   2. ANIMATED HEADLINE EFFECT
+   ========================================================================== */
+function initHeadlineAnimation() {
+  const headlineEl = document.getElementById('animated-headline');
+  if (!headlineEl) return;
+
+  const text = "Turning Data Into Intelligent Decisions.";
+  headlineEl.textContent = "";
+
+  let i = 0;
+  const speed = 45;
+
+  function typeWriter() {
+    if (i < text.length) {
+      headlineEl.textContent += text.charAt(i);
+      i++;
+      setTimeout(typeWriter, speed);
+    }
+  }
+
+  // Brief entrance delay
+  setTimeout(typeWriter, 350);
+}
+
+/* ==========================================================================
+   3. PHOTO FALLBACK ERROR HANDLER
+   ========================================================================== */
+window.handlePortraitError = function(imgElement) {
+  imgElement.onerror = null; // Prevent loop
+  imgElement.src = 'public/placeholder-avatar.svg';
+  console.info('Dhiraj: Note that public/profile.jpg was not found yet. Used public/placeholder-avatar.svg as a styled placeholder.');
+};
+
+/* ==========================================================================
+   4. DYNAMIC DATA RENDERING
+   ========================================================================== */
+function renderCreativePortfolio() {
+  const data = window.portfolioData;
+  if (!data) return;
+
+  // Personal
+  document.querySelectorAll('.data-fullName').forEach(el => el.textContent = data.personal.fullName);
+  document.querySelectorAll('.data-role').forEach(el => el.textContent = data.personal.role);
+  document.querySelectorAll('.data-subRole').forEach(el => el.textContent = data.personal.subRole);
+  document.querySelectorAll('.data-cgpa').forEach(el => el.textContent = data.personal.cgpa);
+  document.querySelectorAll('.data-cgpaScale').forEach(el => el.textContent = data.personal.cgpaScale);
+  document.querySelectorAll('.data-location').forEach(el => el.textContent = data.personal.location);
+  document.querySelectorAll('.data-bioShort').forEach(el => el.textContent = data.personal.bioShort);
+  document.querySelectorAll('.data-availability').forEach(el => el.textContent = data.personal.availability);
+
+  // Email Links
+  document.querySelectorAll('.data-email').forEach(el => {
+    el.textContent = data.personal.email;
+    if (el.tagName === 'A') el.href = `mailto:${data.personal.email}`;
+  });
+
+  // Social & Resume Links
+  document.querySelectorAll('.data-github-link').forEach(el => el.href = data.personal.socialLinks.github);
+  document.querySelectorAll('.data-linkedin-link').forEach(el => el.href = data.personal.socialLinks.linkedin);
+  document.querySelectorAll('.data-kaggle-link').forEach(el => el.href = data.personal.socialLinks.kaggle);
+  
+  document.querySelectorAll('.data-resume-download').forEach(el => {
+    el.href = data.personal.resumePdf;
+    el.setAttribute('download', data.personal.resumeFileName);
+  });
+
+  document.querySelectorAll('.data-resume-view').forEach(el => {
+    el.href = data.personal.resumePdf;
+    el.target = '_blank';
+    el.rel = 'noopener noreferrer';
+  });
+
+  // Portrait Photo
+  const portraitImg = document.getElementById('hero-portrait');
+  if (portraitImg) {
+    portraitImg.src = data.personal.profilePhoto;
+  }
+
+  // About Narrative
+  const aboutStory = document.getElementById('about-story');
+  if (aboutStory && data.about.story) {
+    aboutStory.innerHTML = data.about.story.map(p => `
+      <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-4">${p}</p>
+    `).join('');
+  }
+
+  // About Highlights
+  const aboutHighlights = document.getElementById('about-highlights');
+  if (aboutHighlights && data.about.highlights) {
+    aboutHighlights.innerHTML = data.about.highlights.map(h => `
+      <div class="glass-panel p-4 flex flex-col justify-between">
+        <div>
+          <span class="text-[11px] font-mono uppercase font-bold text-cyan-400 tracking-wider block mb-1">${h.label}</span>
+          <div class="text-xl font-extrabold text-white tracking-tight">${h.value}</div>
+        </div>
+        <p class="text-xs text-slate-400 mt-2 leading-relaxed">${h.detail}</p>
+      </div>
+    `).join('');
+  }
+
+  // About Philosophies
+  const aboutPhilosophies = document.getElementById('about-philosophies');
+  if (aboutPhilosophies && data.about.philosophies) {
+    aboutPhilosophies.innerHTML = data.about.philosophies.map(item => `
+      <div class="glass-panel p-4 flex items-start gap-3">
+        <div class="w-8 h-8 rounded-lg bg-cyan-950/60 border border-cyan-500/30 flex items-center justify-center text-cyan-400 shrink-0 mt-0.5">
+          <i data-lucide="${item.icon}" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <h4 class="text-sm font-bold text-white mb-1">${item.title}</h4>
+          <p class="text-xs text-slate-400 leading-relaxed">${item.description}</p>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Skills Grouped Cards
+  const skillsContainer = document.getElementById('skills-container');
+  if (skillsContainer && data.skills) {
+    skillsContainer.innerHTML = data.skills.map(group => {
+      const colorMap = {
+        cyan: { border: 'hover:border-cyan-400/50', badge: 'bg-cyan-950/70 text-cyan-300 border-cyan-500/30', icon: 'text-cyan-400' },
+        blue: { border: 'hover:border-blue-400/50', badge: 'bg-blue-950/70 text-blue-300 border-blue-500/30', icon: 'text-blue-400' },
+        violet: { border: 'hover:border-purple-400/50', badge: 'bg-purple-950/70 text-purple-300 border-purple-500/30', icon: 'text-purple-400' },
+        magenta: { border: 'hover:border-pink-400/50', badge: 'bg-pink-950/70 text-pink-300 border-pink-500/30', icon: 'text-pink-400' }
+      };
+      const theme = colorMap[group.color] || colorMap.cyan;
+
+      return `
+        <div class="glass-panel p-6 ${theme.border}">
+          <div class="flex items-center gap-3 mb-5 pb-3 border-b border-white/[0.07]">
+            <div class="w-9 h-9 rounded-lg bg-white/[0.05] border border-white/[0.1] flex items-center justify-center ${theme.icon}">
+              <i data-lucide="${group.icon}" class="w-4 h-4"></i>
+            </div>
+            <h3 class="font-bold text-base sm:text-lg text-white">${group.category}</h3>
+          </div>
+
+          <div class="space-y-3.5">
+            ${group.items.map(item => `
+              <div class="p-3.5 rounded-xl bg-black/40 border border-white/[0.06] hover:border-white/[0.15] transition-colors">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="text-sm font-bold text-white font-mono">${item.name}</span>
+                  <span class="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full border ${theme.badge}">
+                    ${item.status}
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 leading-normal">${item.desc}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  // Featured Project: Churn Prediction Case Study
+  const proj = data.featuredProject;
+  if (proj) {
+    document.querySelectorAll('.data-project-title').forEach(el => el.textContent = proj.title);
+    document.querySelectorAll('.data-project-domain').forEach(el => el.textContent = proj.domain);
+    document.querySelectorAll('.data-project-objective').forEach(el => el.textContent = proj.objective);
+    document.querySelectorAll('.data-project-dataset').forEach(el => el.textContent = proj.dataset);
+
+    const stackContainer = document.getElementById('project-tech-stack');
+    if (stackContainer && proj.techStack) {
+      stackContainer.innerHTML = proj.techStack.map(t => `
+        <span class="badge-pill-cyan">${t}</span>
+      `).join('');
+    }
+
+    renderCaseStudyTab('methods'); // Default active tab
+  }
+
+  // Additional / Upcoming Projects
+  const upcomingContainer = document.getElementById('upcoming-projects-container');
+  if (upcomingContainer && data.upcomingProjects) {
+    upcomingContainer.innerHTML = data.upcomingProjects.map(up => `
+      <div class="glass-panel p-6 relative overflow-hidden border-dashed border-white/[0.12]">
+        <div class="flex items-center justify-between gap-2 mb-3">
+          <span class="badge-pill-coral">${up.status}</span>
+          <span class="text-[11px] font-mono text-slate-400">${up.tag}</span>
+        </div>
+        <h4 class="text-lg font-bold text-white mb-2">${up.title}</h4>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">${up.description}</p>
+        <div class="flex flex-wrap gap-1.5 pt-3 border-t border-white/[0.06]">
+          ${up.techStack.map(t => `<span class="text-[11px] font-mono px-2 py-0.5 rounded bg-white/[0.05] text-slate-400">${t}</span>`).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Education Card
+  const edu = data.education;
+  if (edu) {
+    const degEl = document.getElementById('edu-degree');
+    if (degEl) degEl.textContent = edu.degree;
+    const instEl = document.getElementById('edu-institution');
+    if (instEl) instEl.textContent = `${edu.institution} • ${edu.location}`;
+    const periodEl = document.getElementById('edu-period');
+    if (periodEl) periodEl.textContent = edu.period;
+    const cgpaEl = document.getElementById('edu-cgpa');
+    if (cgpaEl) cgpaEl.textContent = `CGPA: ${edu.cgpa}`;
+
+    const cwContainer = document.getElementById('edu-coursework');
+    if (cwContainer && edu.coursework) {
+      cwContainer.innerHTML = edu.coursework.map(c => `
+        <span class="badge-pill-violet">${c}</span>
+      `).join('');
+    }
+  }
+
+  // Timeline
+  const timelineContainer = document.getElementById('timeline-container');
+  if (timelineContainer && data.timeline) {
+    timelineContainer.innerHTML = data.timeline.map((item, idx) => `
+      <div class="timeline-stem">
+        <div class="timeline-bullet"></div>
+        <span class="text-[11px] font-mono font-bold text-cyan-400 uppercase tracking-wider block mb-1">${item.year}</span>
+        <h4 class="text-base font-bold text-white mb-1">${item.title}</h4>
+        <p class="text-xs sm:text-sm text-slate-400 leading-relaxed">${item.description}</p>
+      </div>
+    `).join('');
+  }
+}
+
+/* ==========================================================================
+   5. CASE STUDY INTERACTIVE TABS (OVERVIEW, PREPROCESSING, EDA, METHODS, RESULTS)
+   ========================================================================== */
+function initCaseStudyTabs() {
+  const tabs = document.querySelectorAll('.cyber-tab-btn');
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const tabKey = tab.getAttribute('data-tab');
+      renderCaseStudyTab(tabKey);
+      lucide.createIcons();
+    });
+  });
+}
+
+function renderCaseStudyTab(tabKey) {
+  const container = document.getElementById('case-study-tab-content');
+  const proj = window.portfolioData && window.portfolioData.featuredProject;
+  if (!container || !proj) return;
+
+  if (tabKey === 'preprocessing') {
+    container.innerHTML = `
+      <div class="space-y-2.5">
+        <span class="text-xs font-mono uppercase font-bold text-cyan-400 block mb-2">Data Cleaning & Feature Engineering Workflow:</span>
+        ${proj.preprocessing.map((step, idx) => `
+          <div class="pipeline-step-node flex items-start gap-3">
+            <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/60 shrink-0">Step 0${idx + 1}</span>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${step}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (tabKey === 'eda') {
+    container.innerHTML = `
+      <div class="space-y-2.5">
+        <span class="text-xs font-mono uppercase font-bold text-blue-400 block mb-2">Exploratory Insights & Statistical Signals:</span>
+        ${proj.eda.map((point, idx) => `
+          <div class="pipeline-step-node flex items-start gap-3 border-l-2 border-l-blue-500">
+            <i data-lucide="activity" class="w-4 h-4 text-blue-400 shrink-0 mt-0.5"></i>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${point}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (tabKey === 'methods') {
+    container.innerHTML = `
+      <div class="space-y-2.5">
+        <span class="text-xs font-mono uppercase font-bold text-purple-400 block mb-2">Classification Modeling & Pipeline Architecture:</span>
+        ${proj.methods.map((method, idx) => `
+          <div class="pipeline-step-node flex items-start gap-3 border-l-2 border-l-purple-500">
+            <i data-lucide="cpu" class="w-4 h-4 text-purple-400 shrink-0 mt-0.5"></i>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${method}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (tabKey === 'results') {
+    container.innerHTML = `
+      <div class="space-y-2.5">
+        <span class="text-xs font-mono uppercase font-bold text-emerald-400 block mb-2">Model Evaluation & Tradeoff Realities:</span>
+        ${proj.verifiedResults.map((res, idx) => `
+          <div class="pipeline-step-node flex items-start gap-3 border-l-2 border-l-emerald-500">
+            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${res}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (tabKey === 'planned') {
+    container.innerHTML = `
+      <div class="space-y-2.5">
+        <span class="text-xs font-mono uppercase font-bold text-coral block mb-2">Planned Next Iterations & Deployments:</span>
+        ${proj.plannedFeatures.map((feat, idx) => `
+          <div class="pipeline-step-node flex items-start gap-3 border-l-2 border-l-[#ff6b6b]">
+            <i data-lucide="compass" class="w-4 h-4 text-pink-400 shrink-0 mt-0.5"></i>
+            <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${feat}</p>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+}
+
+/* ==========================================================================
+   6. 1-CLICK CLIPBOARD COPY WITH TOAST
+   ========================================================================== */
+function initClipboardToast() {
+  const copyBtn = document.getElementById('copy-email-btn');
+  const toast = document.getElementById('creative-toast');
+
+  if (!copyBtn) return;
+
+  copyBtn.addEventListener('click', () => {
+    const data = window.portfolioData;
+    const email = data ? data.personal.email : 'dhiraj.mahajan@example.com';
+
+    navigator.clipboard.writeText(email).then(() => {
+      showToast(`Copied ${email} to clipboard!`);
+    }).catch(() => {
+      showToast(`Email: ${email}`);
+    });
+  });
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 2800);
+  }
+}
+
+/* ==========================================================================
+   7. ACTIVE SCROLLSPY
+   ========================================================================== */
+function initScrollSpy() {
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-link');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    const scrollY = window.pageYOffset;
+
+    sections.forEach(section => {
+      const top = section.offsetTop - 120;
+      const height = section.offsetHeight;
+      if (scrollY >= top && scrollY < top + height) {
+        current = section.getAttribute('id');
+      }
+    });
+
+    navLinks.forEach(link => {
+      link.classList.remove('text-cyan-400', 'font-bold');
+      if (link.getAttribute('href') === `#${current}`) {
+        link.classList.add('text-cyan-400', 'font-bold');
+      }
+    });
+  }, { passive: true });
+}
+
+/* ==========================================================================
+   8. MOBILE DRAWER MENU
+   ========================================================================== */
+function initMobileMenu() {
+  const btn = document.getElementById('mobile-menu-btn');
+  const drawer = document.getElementById('mobile-drawer');
+  const links = document.querySelectorAll('.mobile-link');
+
+  if (!btn || !drawer) return;
+
+  btn.addEventListener('click', () => {
+    drawer.classList.toggle('hidden');
+  });
+
+  links.forEach(l => {
+    l.addEventListener('click', () => {
+      drawer.classList.add('hidden');
+    });
+  });
+}
+
+/* ==========================================================================
+   9. CONTACT FORM
+   ========================================================================== */
+function initContactForm() {
+  const form = document.getElementById('contact-form');
+  const alertEl = document.getElementById('contact-alert');
+
+  if (!form) return;
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('contact-name').value.trim();
+    const email = document.getElementById('contact-email').value.trim();
+    const message = document.getElementById('contact-message').value.trim();
+
+    if (!name || !email || !message) {
+      alert('Please fill out all fields.');
+      return;
+    }
+
+    const data = window.portfolioData;
+    const recipient = data ? data.personal.email : 'dhiraj.mahajan@example.com';
+    const mailto = `mailto:${recipient}?subject=Portfolio Inquiry from ${encodeURIComponent(name)}&body=${encodeURIComponent(`From: ${name} (${email})\n\nMessage:\n${message}`)}`;
+
+    if (alertEl) {
+      alertEl.classList.remove('hidden');
+      alertEl.innerHTML = `
+        <div class="p-3.5 rounded-xl bg-cyan-950/70 border border-cyan-500/50 text-cyan-200 text-xs flex items-center gap-2">
+          <i data-lucide="check" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+          <span>Thank you, <strong>${name}</strong>! Opening your email app to deliver your message.</span>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    setTimeout(() => {
+      window.location.href = mailto;
+    }, 600);
+
+    form.reset();
+  });
+}
